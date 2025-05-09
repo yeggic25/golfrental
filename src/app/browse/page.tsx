@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Club } from '@/types';
 import { clubs } from '@/data/mockData';
@@ -8,7 +8,8 @@ import ClubCard from '@/components/ClubCard';
 import ClubFilters, { FilterState } from '@/components/ClubFilters';
 import { FaSearch, FaSort } from 'react-icons/fa';
 
-export default function BrowsePage() {
+// Create a separate component to handle search params
+function BrowsePageContent() {
   const searchParams = useSearchParams();
   const locationParam = searchParams.get('location');
   
@@ -163,5 +164,27 @@ export default function BrowsePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Loading fallback component
+function BrowsePageLoading() {
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <h1 className="text-3xl font-bold mb-6">Browse Golf Clubs</h1>
+      <div className="flex justify-center items-center h-64">
+        <div className="text-center">
+          <p className="text-gray-600 text-lg">Loading...</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function BrowsePage() {
+  return (
+    <Suspense fallback={<BrowsePageLoading />}>
+      <BrowsePageContent />
+    </Suspense>
   );
 } 
